@@ -8,6 +8,7 @@ import { updateSignedInUserData } from "../utils/actions/authActions";
 import { useDispatch } from "react-redux";
 import { updateLoggedInUserData } from "../store/authSlice";
 import { FontAwesome } from '@expo/vector-icons';
+import { updateChatData } from "../utils/actions/chatActions";
 
 
 const ProfileImage = props => {
@@ -23,6 +24,7 @@ const ProfileImage = props => {
     const showRemoveButton = props.showRemoveButton && props.showRemoveButton === true;
 
     const userId = props.userId;
+    const chatId = props.chatId;
 
 
     const pickImage = async () => {
@@ -35,17 +37,22 @@ const ProfileImage = props => {
             }
 
             setIsLoading(true);
-            const uploadUrl = await uploadImageAsync(tempUri);
+            const uploadUrl = await uploadImageAsync(tempUri, chatId !== undefined);
             setIsLoading(false);
 
             if (!uploadUrl) {
                 throw new Error("Could not upload image!");
             }
 
-            const newData = { profilePicture: uploadUrl }
+            if (chatId) {
+                await updateChatData(chatId, userId, { chatImage: uploadUrl });
+            }
+            else {
+                const newData = { profilePicture: uploadUrl }
 
-            await updateSignedInUserData(userId, newData);
-            dispatch(updateLoggedInUserData({ newData }));
+                await updateSignedInUserData(userId, newData);
+                dispatch(updateLoggedInUserData({ newData }));
+            }
 
             setImage({uri: uploadUrl});
 
