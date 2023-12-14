@@ -2,33 +2,51 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import ProfileImage from "./ProfileImage";
 import colors from "../constants/colors";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
+
+const imageSize = 40;
 
 const DataItem = props => {
 
-    const { title, subtitle, image, type, isChecked } = props;
+    const { title, subtitle, image, type, isChecked, icon } = props;
 
     return (
         <TouchableWithoutFeedback onPress={props.onPress}>
             <View style={styles.container}>
 
-                <ProfileImage
-                    uri={image}
-                    size={40}
-                />
+                
+
+                {
+                    !icon &&
+                    <ProfileImage
+                        uri={image}
+                        size={imageSize}
+                    />
+                }
+
+                {
+                    icon &&
+                    <View style={styles.leftIconContainer}> 
+                        <AntDesign name={icon} size={20} color={colors.primary} />  
+                    </View>
+                }
 
                 <View style={styles.textContainer}>
                     <Text
                         numberOfLines={1}
-                        style={styles.title}>
+                        style={{...styles.title, ...{color: type === "button" ? colors.primary : colors.textColor}}}>
                         {title}
                     </Text>
                     
-                    <Text
-                        numberOfLines={1}
-                        style={styles.subtitle}>
-                        {subtitle}
-                    </Text>
+                    {
+                        subtitle &&
+                        <Text
+                            numberOfLines={1}
+                            style={styles.subtitle}>
+                            {subtitle}
+                        </Text>
+                    }
+                    
                 </View>
 
                 {
@@ -82,6 +100,14 @@ const styles = StyleSheet.create({
     checkedStyle: {
         backgroundColor: colors.green,
         borderColor: "transparent",
+    },
+    leftIconContainer: {
+        backgroundColor: colors.extraLightGrey,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        width: imageSize,
+        height: imageSize
     }
 });
 
