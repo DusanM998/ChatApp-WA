@@ -189,7 +189,16 @@ const ChatScreen = props => {
 
                                     const isOwnMessage = message.sendBy === userData.userId;
 
-                                    const messageType = isOwnMessage ? "myMessage" : "otherMessages";
+                                    let messageType;
+                                    if (message.type && message.type === "info") {
+                                        messageType = "info";
+                                    }
+                                    else if (isOwnMessage) {
+                                        messageType = "myMessage";
+                                    }
+                                    else {
+                                        messageType = "otherMessages";
+                                    }
 
                                     const sender = message.sendBy && storedUsers[message.sendBy];
                                     const name = sender && `${sender.firstName} ${sender.lastName}`

@@ -8,12 +8,14 @@ import colors from "../constants/colors";
 import { getUserChats } from "../utils/actions/userActions";
 import DataItem from "../components/DataItem";
 import SubmitButton from "../components/SubmitButton";
+import { removeUserFromChat } from "../utils/actions/chatActions";
 
 const ContactScreen = props => {
 
     const [isLoading, setIsLoading] = useState(false);
 
     const storedUsers = useSelector(state => state.users.storedUsers);
+    const userData = useSelector(state => state.auth.userData);
     const currentUser = storedUsers[props.route.params.uid];
 
     const storedChats = useSelector(state => state.chats.chatsData);
@@ -36,12 +38,12 @@ const ContactScreen = props => {
 
     }, [])
 
-    const removeFromChat = useCallback(() => {
+    const removeFromChat = useCallback(async () => {
         try {
             setIsLoading(true);
 
             //Remove the user
-            
+            await removeUserFromChat(userData, currentUser, chatData);
 
             props.navigation.goBack();
         } catch (error) {
