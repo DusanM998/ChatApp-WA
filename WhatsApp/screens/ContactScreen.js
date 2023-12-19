@@ -41,6 +41,7 @@ const ContactScreen = props => {
             setIsLoading(true);
 
             //Remove the user
+            
 
             props.navigation.goBack();
         } catch (error) {
