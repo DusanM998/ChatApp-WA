@@ -7,6 +7,7 @@ import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
 import PageTitle from '../components/PageTitle';
 import colors from '../constants/colors';
+import { FontAwesome } from '@expo/vector-icons';
 
 const ChatListScreen = props => {
 
@@ -80,7 +81,8 @@ const ChatListScreen = props => {
             <PageTitle text="Chats" />
 
             <View>
-                <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", {isGroupChat: true})}>
+                <TouchableOpacity style={styles.groupContainer} onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
+                    <FontAwesome name="group" size={20} color="white" style={styles.groupIcon} />
                     <Text style={styles.newGroupText}>New Group</Text>
                 </TouchableOpacity>
             </View>
@@ -129,10 +131,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    groupContainer: {
+        borderRadius: 50,
+        backgroundColor: colors.primary,
+    },
     newGroupText: {
-        color: colors.blue,
+        color: colors.white,
         fontSize: 17,
-        marginBottom: 5
+        marginBottom: 5,
+        height: 40,
+        left: 46,
+        top: 10,
+    },
+    groupIcon: {
+        position: "absolute",
+        left: 12,
+        top: 12,
     }
 })
 

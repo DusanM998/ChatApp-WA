@@ -6,11 +6,12 @@ import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import Input from '../components/Input';
 import { reducer } from '../utils/reducers/formReducer';
-import { updateChatData } from '../utils/actions/chatActions';
+import { removeUserFromChat, updateChatData } from '../utils/actions/chatActions';
 import colors from '../constants/colors';
 import SubmitButton from '../components/SubmitButton';
 import { validateInput } from '../utils/actions/formActions';
 import DataItem from '../components/DataItem';
+import { Ionicons } from '@expo/vector-icons';
 
 const ChatSettingsScreen = props => {
 
@@ -18,7 +19,7 @@ const ChatSettingsScreen = props => {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const chatId = props.route.params.chatId;
-    const chatData = useSelector(state => state.chats.chatsData[chatId]);
+    const chatData = useSelector(state => state.chats.chatsData[chatId] || {});
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
 
@@ -62,6 +63,27 @@ const ChatSettingsScreen = props => {
         const currentValues = formState.inputValues;
 
         return currentValues.chatName != chatData.chatName;
+    }
+
+
+    const leaveChat = useCallback(async () => {
+        try {
+            setIsLoading(true);
+
+            //Remove the user
+            await removeUserFromChat(userData, userData, chatData);
+
+            props.navigation.popToTop();
+        } catch (error) {
+            console.log(error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, [props.navigation, isLoading])
+
+    if (!chatData.users) {
+        return null;
     }
     
     return (
@@ -131,6 +153,15 @@ const ChatSettingsScreen = props => {
                 }
 
             </ScrollView>
+            {
+                <SubmitButton 
+                    title="Leave Chat"
+                    color={colors.red}
+                    onPress={() => leaveChat()}
+                    style={{marginBottom: 20}}
+                    showExitButton={true}
+                />
+            }
         </PageContainer>
     )
 };
