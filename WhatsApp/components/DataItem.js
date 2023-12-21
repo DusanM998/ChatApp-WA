@@ -2,13 +2,13 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import ProfileImage from "./ProfileImage";
 import colors from "../constants/colors";
-import { Ionicons, AntDesign } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 
 const imageSize = 40;
 
 const DataItem = props => {
 
-    const { title, subtitle, image, type, isChecked, icon } = props;
+    const { title, subtitle, image, type, isChecked, icon} = props;
 
     return (
         <TouchableWithoutFeedback onPress={props.onPress}>
@@ -27,7 +27,7 @@ const DataItem = props => {
                 {
                     icon &&
                     <View style={styles.leftIconContainer}> 
-                        <AntDesign name={icon} size={20} color={colors.primary} />  
+                        <Feather name={icon} size={20} color={colors.primary} />  
                     </View>
                 }
 
