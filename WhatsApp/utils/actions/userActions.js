@@ -1,4 +1,4 @@
-import { child, endAt, get, getDatabase, orderByChild, query, ref, remove, startAt } from "firebase/database"
+import { child, endAt, get, getDatabase, orderByChild, push, query, ref, remove, startAt } from "firebase/database"
 import { getFirebaseApp } from "../firebaseHelper";
 import { async } from "validate.js";
 
@@ -35,6 +35,19 @@ export const deleteUserChat = async (userId, key) => {
         const chatRef = child(dbRef, `userChats/${userId}/${key}`);
 
         await remove(chatRef);
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export const addUserChat = async (userId, chatId) => {
+    try {
+        const app = getFirebaseApp();
+        const dbRef = ref(getDatabase(app));
+        const chatRef = child(dbRef, `userChats/${userId}`);
+
+        await push(chatRef, chatId);
     } catch (error) {
         console.log(error);
         throw error;

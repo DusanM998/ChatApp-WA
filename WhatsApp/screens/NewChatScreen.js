@@ -9,7 +9,7 @@ import commonStyles from '../constants/commonStyles';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { searchUsers } from '../utils/actions/userActions';
-import { async } from 'validate.js';
+import { async, isNumber } from 'validate.js';
 import DataItem from '../components/DataItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStoredUsers } from '../store/userSlice';
@@ -31,8 +31,12 @@ const NewChatScreen = props => {
 
     const selectedUsersFlatList = useRef();
 
+    const chatId = props.route.params && props.route.params.chatId;
+    const existingUsers = props.route.params && props.route.params.existingUsers;
     const isGroupChat = props.route.params && props.route.params.isGroupChat;
-    const isGroupChatDisabled = selectedUsers.length === 0 || chatName === "";
+    const isGroupChatDisabled = selectedUsers.length === 0 || (isNewChat && chatName === "");
+
+    const isNewChat = !chatId;
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -48,19 +52,21 @@ const NewChatScreen = props => {
                     {
                         isGroupChat &&
                         <Item
-                            title="Create"
+                            title={isNewChat ? "Create" : "Add"}
                             disabled={isGroupChatDisabled}
                             color={isGroupChatDisabled ? colors.lightGrey : undefined}
                             onPress={() => {
-                                props.navigation.navigate("ChatList", {
+                                const screenName = isNewChat ? "ChatList" : "ChatSettings";
+                                props.navigation.navigate(screenName, {
                                     selectedUsers,
-                                    chatName
+                                    chatName,
+                                    chatId
                                 });
                             }}/>
                     }
                 </HeaderButtons>
             },
-            headerTitle: isGroupChat ? "Add participants" : "New chat"
+            headerTitle: isGroupChat ? "Add Participants" : "New Chat"
         })
     }, [chatName, selectedUsers]);
     
@@ -114,17 +120,20 @@ const NewChatScreen = props => {
         <PageContainer>
 
             {
-                isGroupChat &&
-                <>
-                    <View style={styles.chatNameContainer}>
-                        <View style={styles.inputContainer}>
-                            <TextInput 
-                                style={styles.textbox}
-                                placeholder='Enter a name for your chat'
-                                onChangeText={text => setChatName(text)}
-                            />
-                        </View>
+                isNewChat && isGroupChat &&
+                <View style={styles.chatNameContainer}>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            style={styles.textbox}
+                            placeholder='Enter a name for your chat'
+                            onChangeText={text => setChatName(text)}
+                        />
                     </View>
+                </View>
+            }
+                
+            {
+                isGroupChat &&
                     <View style={styles.selectedUsersContainer}> 
                         <FlatList
                             style={styles.selectedUsersList}
@@ -147,7 +156,7 @@ const NewChatScreen = props => {
                             }}
                         />
                     </View>
-                </>    
+                    
             }
 
             <View style={styles.searchContainer}>
@@ -173,6 +182,10 @@ const NewChatScreen = props => {
                     renderItem={(itemData) => {
                         const userId = itemData.item;
                         const userData = users[userId];
+
+                        if (existingUsers && existingUsers.includes(userId)) {
+                            return;
+                        }
 
                         return (
                             <DataItem
